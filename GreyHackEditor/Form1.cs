@@ -2,7 +2,9 @@ using Microsoft.Data.Sqlite;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Runtime.InteropServices.Marshalling;
+using System.Text;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 
 namespace GreyHackEditor
 {
@@ -31,6 +33,41 @@ namespace GreyHackEditor
             public int remotePID { get; set; }
             public object? routerNetID { get; set; }
         }
+        /*
+        public class ConfigOSNetworkLan
+        {
+            public string clientID { get; set; }
+            public bool disabledNetwork { get; set; }
+            public List<string> idxLocalIPs { get; set; }
+            public List<ConfigOSNPC> idxNpcs { get; set; }
+            public List<string> idxPublicIPs { get; set; }
+            public bool missionCreated { get; set; }
+            public KeyValuePair<string, ConfigOSMissionPart> missionParts { get; set; }
+            public int netSpeed { get; set; }
+            public KeyValuePair<string, List<string>> npcUserNames { get; set; }
+            public string publicIP { get; set; }
+            public ConfigOSRouterDevice routerDevice { get; set; }
+            public int seed { get; set; }
+            public int typePlace { get; set; }
+            public KeyValuePair<string, List<string>> userBankIds { get; set; }
+
+        }
+        /*
+        public class ConfigOSPersona
+        {
+            public string ID { get; set; }
+            public string apellido { get; set; }
+            public string computerNetID { get; set; }
+            public List<object> currentTraces { get; set; }
+            public int edad { get; set; }
+        }
+        */
+        public class ConfigOSCredential
+        {
+            public string encPassword { get; set; }
+            public string password { get; set; }
+            public string userName { get; set; }
+        }
         public class ConfigOS
         {
             public int activeNetCard { get; set; }
@@ -45,31 +82,37 @@ namespace GreyHackEditor
             public string? ispLocalIpEth { get; set; }
             public string origIpPublica { get; set; }
             public string pcName { get; set; }
-            public object personas { get; set; }
+            public List<JsonNode> personas { get; set; }
             public string playerID { get; set; }
-            public object puertos { get; set; }
+            public JsonNode puertos { get; set; }
             public string rentalHomeIP { get; set; }
             public bool saved { get; set; }
-            public object savedNetworks { get; set; }
-            public object servicos { get; set; }
-            public object? userBank { get; set; }
-            public object? userMail { get; set; }
+            public JsonNode savedNetworks { get; set; }
+            public JsonNode servicos { get; set; }
+            public ConfigOSCredential? userBank { get; set; }
+            public ConfigOSCredential? userMail { get; set; }
             public string walletID { get; set; }
             public string? backupFirewall { get; set; }
             public string? backupPassRootRented { get; set; }
             public string? backupPorts { get; set; }
             public string? backupRented { get; set; }
             public bool? isHomeNetwork { get; set; }
-            public object? networkLan { get; set; }
-            public object? reverseShells { get; set; }
+            public JsonNode? networkLan { get; set; }
+            public JsonNode? reverseShells { get; set; }
             public string? routerPassword { get; set; }
 
         }
+        public class UserKarma
+        {
+            public int karma { get; set; }
+            public int pendingMission { get; set; }
+            public List<JsonNode> previousKarma { get; set; }
+        }
         public class User
         {
-            public object grupos { get; set; }
+            public List<string> grupos { get; set; }
             public bool isDeletable { get; set; }
-            public object karma { get; set; }
+            public UserKarma karma { get; set; }
             public string nombreUsuario { get; set; }
             public string passPlano { get; set; }
             public string password { get; set; }
@@ -111,7 +154,7 @@ namespace GreyHackEditor
             public bool allowImport { get; set; }
             public string ID { get; set; }
             public string? desc { get; set; }
-            public object? helperImport { get; set; }
+            public JsonNode? helperImport { get; set; }
             public bool isBinario { get; set; }
             public bool isEditedOtherPlayer { get; set; }
             public string origOwnerID { get; set; }
@@ -203,6 +246,16 @@ namespace GreyHackEditor
         private SqliteConnection GetConnection()
         {
             return new SqliteConnection("Data Source=" + this.pathBox.Text);
+        }
+        private string MD5(string s)
+        {
+            using var provider = System.Security.Cryptography.MD5.Create();
+            StringBuilder builder = new StringBuilder();
+
+            foreach (byte b in provider.ComputeHash(Encoding.UTF8.GetBytes(s)))
+                builder.Append(b.ToString("x2").ToLower());
+
+            return builder.ToString();
         }
 
         private void CorruptDatabaseError(string? s)
@@ -456,6 +509,10 @@ namespace GreyHackEditor
         {
             TagUpdate(this.Controls);
         }
+        private void computerComboxBox_SelectedIndexChange(object sender, EventArgs e)
+        {
+
+        }
 
         private string bankActiveUsername;
         private BankTransactions bankActiveTransactions;
@@ -535,7 +592,48 @@ namespace GreyHackEditor
 
                 command1.ExecuteNonQuery();
 
+                var command2 = connection.CreateCommand();
+                command2.CommandText = "SELECT ConfigOS FROM Computer WHERE IsPlayer = 1";
+                var reader2 = command2.ExecuteReader();
+                reader2.Read();
+                string cosJson = reader2.GetString(0);
+                ConfigOS cos = JsonSerializer.Deserialize<ConfigOS>(cosJson);
+                cos.userBank.password = this.bankPasswordBox.Text;
+                cos.userBank.encPassword = MD5(this.bankPasswordBox.Text);
+
+                var command3 = connection.CreateCommand();
+                command3.CommandText = "UPDATE Computer SET ConfigOS = $cos WHERE IsPlayer = 1";
+                command3.Parameters.AddWithValue("$cos", JsonSerializer.Serialize<ConfigOS>(cos));
+
+                command3.ExecuteNonQuery();
+
                 connection.Close();
+            }
+        }
+
+        private void listView2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+        private void computerUsersTable_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
+        {
+            if (e == null) return;
+            string n = this.computerUsersTable.Columns[e.ColumnIndex].Name;
+            if (n == "karma" || n == "xp")
+            {
+                int newInteger;
+                if (!int.TryParse(e.FormattedValue.ToString(), out newInteger) || newInteger < 0) {
+                    e.Cancel = true;
+                    computerUsersTable.Rows[e.RowIndex].ErrorText = "The "+n+" value must be a number greater than 0.";
+                } else
+                {
+                    computerUsersTable.Rows[e.RowIndex].ErrorText = null;
+                }
             }
         }
     }

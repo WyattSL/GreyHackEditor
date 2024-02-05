@@ -34,6 +34,16 @@
             dbTime = new Label();
             dbTab = new TabControl();
             tabComputers = new TabPage();
+            computerSubTab = new TabControl();
+            ComputerSubtabHardware = new TabPage();
+            ComputerSubtabFilesystem = new TabPage();
+            computerSubtabUsers = new TabPage();
+            computerUsersTable = new DataGridView();
+            username = new DataGridViewTextBoxColumn();
+            password = new DataGridViewTextBoxColumn();
+            karma = new DataGridViewTextBoxColumn();
+            xp = new DataGridViewTextBoxColumn();
+            deletable = new DataGridViewCheckBoxColumn();
             computerComboBox = new ComboBox();
             tabBanks = new TabPage();
             bankTransactionList = new TextBox();
@@ -45,15 +55,13 @@
             tabWorld = new TabPage();
             hidePasswords = new CheckBox();
             github = new Button();
-            computerSubTab = new TabControl();
-            ComputerSubtabHardware = new TabPage();
-            ComputerSubtabFilesystem = new TabPage();
-            computerSubtabUsers = new TabPage();
             dbTab.SuspendLayout();
             tabComputers.SuspendLayout();
+            computerSubTab.SuspendLayout();
+            computerSubtabUsers.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)computerUsersTable).BeginInit();
             tabBanks.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)bankBalanceBox).BeginInit();
-            computerSubTab.SuspendLayout();
             SuspendLayout();
             // 
             // pathBox
@@ -122,6 +130,83 @@
             tabComputers.Text = "Computers";
             tabComputers.UseVisualStyleBackColor = true;
             tabComputers.Click += tabPage1_Click;
+            // 
+            // computerSubTab
+            // 
+            computerSubTab.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            computerSubTab.Controls.Add(ComputerSubtabHardware);
+            computerSubTab.Controls.Add(ComputerSubtabFilesystem);
+            computerSubTab.Controls.Add(computerSubtabUsers);
+            computerSubTab.Location = new Point(6, 35);
+            computerSubTab.Name = "computerSubTab";
+            computerSubTab.SelectedIndex = 0;
+            computerSubTab.Size = new Size(432, 430);
+            computerSubTab.TabIndex = 1;
+            // 
+            // ComputerSubtabHardware
+            // 
+            ComputerSubtabHardware.Location = new Point(4, 24);
+            ComputerSubtabHardware.Name = "ComputerSubtabHardware";
+            ComputerSubtabHardware.Size = new Size(424, 402);
+            ComputerSubtabHardware.TabIndex = 0;
+            ComputerSubtabHardware.Text = "Hardware";
+            ComputerSubtabHardware.UseVisualStyleBackColor = true;
+            // 
+            // ComputerSubtabFilesystem
+            // 
+            ComputerSubtabFilesystem.Location = new Point(4, 24);
+            ComputerSubtabFilesystem.Name = "ComputerSubtabFilesystem";
+            ComputerSubtabFilesystem.Size = new Size(424, 402);
+            ComputerSubtabFilesystem.TabIndex = 1;
+            ComputerSubtabFilesystem.Text = "Filesystem";
+            ComputerSubtabFilesystem.UseVisualStyleBackColor = true;
+            // 
+            // computerSubtabUsers
+            // 
+            computerSubtabUsers.Controls.Add(computerUsersTable);
+            computerSubtabUsers.Location = new Point(4, 24);
+            computerSubtabUsers.Name = "computerSubtabUsers";
+            computerSubtabUsers.Size = new Size(424, 402);
+            computerSubtabUsers.TabIndex = 2;
+            computerSubtabUsers.Text = "Users";
+            computerSubtabUsers.UseVisualStyleBackColor = true;
+            // 
+            // computerUsersTable
+            // 
+            computerUsersTable.AllowUserToAddRows = false;
+            computerUsersTable.AllowUserToDeleteRows = false;
+            computerUsersTable.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            computerUsersTable.Columns.AddRange(new DataGridViewColumn[] { username, password, karma, xp, deletable });
+            computerUsersTable.Location = new Point(3, 3);
+            computerUsersTable.Name = "computerUsersTable";
+            computerUsersTable.Size = new Size(418, 396);
+            computerUsersTable.TabIndex = 0;
+            computerUsersTable.CellValidating += computerUsersTable_CellValidating;
+            // 
+            // username
+            // 
+            username.HeaderText = "Username";
+            username.Name = "username";
+            // 
+            // password
+            // 
+            password.HeaderText = "Password";
+            password.Name = "password";
+            // 
+            // karma
+            // 
+            karma.HeaderText = "Karma";
+            karma.Name = "karma";
+            // 
+            // xp
+            // 
+            xp.HeaderText = "XP";
+            xp.Name = "xp";
+            // 
+            // deletable
+            // 
+            deletable.HeaderText = "Deletable";
+            deletable.Name = "deletable";
             // 
             // computerComboBox
             // 
@@ -244,45 +329,6 @@
             github.UseVisualStyleBackColor = true;
             github.Click += button1_Click;
             // 
-            // computerSubTab
-            // 
-            computerSubTab.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            computerSubTab.Controls.Add(ComputerSubtabHardware);
-            computerSubTab.Controls.Add(ComputerSubtabFilesystem);
-            computerSubTab.Controls.Add(computerSubtabUsers);
-            computerSubTab.Location = new Point(6, 35);
-            computerSubTab.Name = "computerSubTab";
-            computerSubTab.SelectedIndex = 0;
-            computerSubTab.Size = new Size(432, 430);
-            computerSubTab.TabIndex = 1;
-            // 
-            // ComputerSubtabHardware
-            // 
-            ComputerSubtabHardware.Location = new Point(4, 24);
-            ComputerSubtabHardware.Name = "ComputerSubtabHardware";
-            ComputerSubtabHardware.Size = new Size(424, 402);
-            ComputerSubtabHardware.TabIndex = 0;
-            ComputerSubtabHardware.Text = "Hardware";
-            ComputerSubtabHardware.UseVisualStyleBackColor = true;
-            // 
-            // ComputerSubtabFilesystem
-            // 
-            ComputerSubtabFilesystem.Location = new Point(4, 24);
-            ComputerSubtabFilesystem.Name = "ComputerSubtabFilesystem";
-            ComputerSubtabFilesystem.Size = new Size(424, 402);
-            ComputerSubtabFilesystem.TabIndex = 1;
-            ComputerSubtabFilesystem.Text = "Filesystem";
-            ComputerSubtabFilesystem.UseVisualStyleBackColor = true;
-            // 
-            // computerSubtabUsers
-            // 
-            computerSubtabUsers.Location = new Point(4, 24);
-            computerSubtabUsers.Name = "computerSubtabUsers";
-            computerSubtabUsers.Size = new Size(424, 402);
-            computerSubtabUsers.TabIndex = 2;
-            computerSubtabUsers.Text = "Users";
-            computerSubtabUsers.UseVisualStyleBackColor = true;
-            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -300,10 +346,12 @@
             Load += Form1_Load;
             dbTab.ResumeLayout(false);
             tabComputers.ResumeLayout(false);
+            computerSubTab.ResumeLayout(false);
+            computerSubtabUsers.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)computerUsersTable).EndInit();
             tabBanks.ResumeLayout(false);
             tabBanks.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)bankBalanceBox).EndInit();
-            computerSubTab.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -331,5 +379,11 @@
         private TabPage ComputerSubtabHardware;
         private TabPage ComputerSubtabFilesystem;
         private TabPage computerSubtabUsers;
+        private DataGridView computerUsersTable;
+        private DataGridViewTextBoxColumn username;
+        private DataGridViewTextBoxColumn password;
+        private DataGridViewTextBoxColumn karma;
+        private DataGridViewTextBoxColumn xp;
+        private DataGridViewCheckBoxColumn deletable;
     }
 }
